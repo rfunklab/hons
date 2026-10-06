@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hons"
-version = "0.1.1"
+version = "0.1.2"
 description = "Select network thresholds using persistent homology."
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
@@ -19,6 +19,7 @@ dependencies = ["numpy>=1.26.4,<3", "pandas>=2.1.4,<4", "gudhi>=3.10.1,<3.12", "
 plot = ["matplotlib>=3.8,<4"]
 
 [project.urls]
+Paper = "https://arxiv.org/abs/2510.04884"
 Source = "https://github.com/rfunklab/hons"
 Issues = "https://github.com/rfunklab/hons/issues"
 

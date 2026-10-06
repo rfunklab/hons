@@ -1,10 +1,10 @@
 # Higher-order network selection
 
-<img src="https://raw.githubusercontent.com/rfunklab/hons/a763c0b43e692ad65491f555a7ab080b6846567b/docs/hons_logo.png" alt="HONS logo" width="300">
+<img src="https://raw.githubusercontent.com/rfunklab/hons/v0.1.2/docs/hons_logo.png" alt="HONS logo" width="300">
 
-Network thresholding helps researchers extract interpretable structure from dense relational data by removing nodes or edges according to their properties. Choosing the cutoffs is harder: a ground-truth network is rarely available, thresholds are often selected by trial and error, and small changes can produce substantially different networks. Criteria based on individual nodes or edges can also overlook connections that contribute to higher-order structure.
+Network thresholding helps researchers extract interpretable structure from dense relational data by removing nodes or edges according to their properties. Choosing the cutoffs is harder—a ground-truth network is rarely available, thresholds are often selected by trial and error, and small changes can produce substantially different networks. Criteria based on individual nodes or edges can also overlook connections that contribute to higher-order structure.
 
-**HONS selects thresholds for numerical node attributes or edge weights using the network's cycles and cavities.** Persistent homology measures how these features appear and disappear as connections enter the network. HONS compares their persistence-image representations across a grid of candidate thresholds and selects the network with the smallest change under neighboring threshold choices. Researchers can require cycle and cavity counts to meet chosen percentiles among selectable candidate networks.
+HONS (higher-order network selection) is a Python package implementing the topological thresholding method described in [*Higher-Order Network Structure Inference: A Topological Approach to Network Selection*](https://arxiv.org/abs/2510.04884). **The method selects thresholds for numerical node attributes or edge weights using the network's cycles and cavities.** Persistent homology measures how these features appear and disappear as connections enter the network. HONS compares their persistence-image representations across a grid of candidate thresholds and selects the network with the smallest change under neighboring threshold choices. Researchers can require cycle and cavity counts to meet chosen percentiles among selectable candidate networks.
 
 ## Install
 
@@ -53,7 +53,7 @@ Use `node_attribute="name"` to retain nodes whose named attribute falls within t
 
 ## Filtration values
 
-A filtration describes the order in which connections enter the topology calculation. Each edge needs a finite numerical entry value: a time, a distance or another quantity appropriate to your application. Smaller values enter earlier. All vertices are present at the start, and a clique enters when its last edge enters. The threshold attribute determines which nodes or edges to retain; the filtration values determine when the retained edges enter the persistence calculation.
+A filtration describes the order in which connections enter the topology calculation. Each edge needs a finite numerical entry value—a time, a distance or another quantity appropriate to your application. Smaller values enter earlier. All vertices are present at the start, and a clique enters when its last edge enters. The threshold attribute determines which nodes or edges to retain; the filtration values determine when the retained edges enter the persistence calculation.
 
 By default, HONS reads entry values from the edge attribute `filtration`. Use `filtration="name"` to choose another attribute. HONS accepts entry values in their original units and converts them internally to 0–1 for the persistence images. By default, the conversion uses the minimum and maximum edge values in the full input graph. Every candidate uses that same range. Set `filtration_range=(start, stop)` for a known observation window or a fixed range across multiple input graphs. For example, use `filtration="first_seen", filtration_range=(1920, 2021)` for edges dated by first appearance. The demo uses its generating interval, `(0, 1)`.
 
@@ -61,14 +61,14 @@ The fixed image grid and Gaussian width apply to this normalized scale. A change
 
 ## Scientific concept networks
 
-In *Higher-Order Network Structure Inference: A Topological Approach to Network Selection*, we apply HONS to concepts that co-occur in scientific articles. Nodes represent concepts, document frequency supplies the attribute to threshold, and an edge's first co-occurrence year supplies its entry value. `examples/concept_network.py` shows how to build a NetworkX graph from generated article–concept records and pass that graph to HONS.
+In the [paper](https://arxiv.org/abs/2510.04884), we apply topological thresholding to concepts that co-occur in scientific articles. Nodes represent concepts, document frequency supplies the attribute to threshold, and an edge's first co-occurrence year supplies its entry value. `examples/concept_network.py` shows how to build a NetworkX graph from generated article–concept records and pass that graph to HONS.
 
 | Example | Purpose | Command from a source checkout |
 | --- | --- | --- |
 | `network_demo.py` | Select nodes from an existing graph and plot the input and selected networks. | `python examples/network_demo.py` |
 | `concept_network.py` | Build a concept network from article–concept records, then select nodes by document frequency. | `python examples/concept_network.py` |
 
-The concept example uses a fixed observation window across candidates. The paper's empirical analysis normalizes time separately for each retained network, using the year of the earliest article containing a retained concept and the corpus's final year. The [replication repository](https://github.com/rfunklab/hons-replication) includes the resulting persistence diagrams and reproduces the selection calculations from them. The repository also demonstrates edge-weight thresholding on an open workplace contact network.
+The concept example uses a fixed observation window across candidates. The [paper](https://arxiv.org/abs/2510.04884)'s empirical analysis normalizes time separately for each retained network, using the year of the earliest article containing a retained concept and the corpus's final year. The [replication repository](https://github.com/rfunklab/hons-replication) includes the resulting persistence diagrams and reproduces the selection calculations from them. The repository also demonstrates edge-weight thresholding on an open workplace contact network.
 
 ## Scores and persistence diagrams
 
@@ -82,6 +82,6 @@ Run the tests from a source checkout with `python -m unittest discover -s tests`
 
 ## Citation and license
 
-Adam Schroeder, Russell Funk, Jingyi Guan, Taylor Okonek and Lori Ziegelmeier. *Higher-Order Network Structure Inference: A Topological Approach to Network Selection*.
+Adam Schroeder, Russell J. Funk, Jingyi Guan, Taylor Okonek and Lori Ziegelmeier. [*Higher-Order Network Structure Inference: A Topological Approach to Network Selection*](https://arxiv.org/abs/2510.04884).
 
-The [MIT license](https://github.com/rfunklab/hons/blob/main/LICENSE) applies to this repository's code, documentation and original assets. Contact Russell Funk at rfunk@umn.edu.
+The [MIT license](https://github.com/rfunklab/hons/blob/main/LICENSE) applies to this repository's code, documentation and original assets. Contact Russell J. Funk at rfunk@umn.edu.
