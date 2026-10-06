@@ -1,6 +1,6 @@
 # Higher-order network selection
 
-<img src="docs/hons_logo.png" alt="HONS logo" width="300">
+<img src="https://raw.githubusercontent.com/rfunklab/hons/a763c0b43e692ad65491f555a7ab080b6846567b/docs/hons_logo.png" alt="HONS logo" width="300">
 
 Network thresholding helps researchers extract interpretable structure from dense relational data by removing nodes or edges according to their properties. Choosing the cutoffs is harder: a ground-truth network is rarely available, thresholds are often selected by trial and error, and small changes can produce substantially different networks. Criteria based on individual nodes or edges can also overlook connections that contribute to higher-order structure.
 
@@ -37,7 +37,7 @@ print(network.number_of_nodes(), network.number_of_edges())    # 29 143
 print(selected.number_of_nodes(), selected.number_of_edges())  # 18 41
 ```
 
-![Input network and selected network](docs/network_demo.png)
+![Input network and selected network](https://raw.githubusercontent.com/rfunklab/hons/a763c0b43e692ad65491f555a7ab080b6846567b/docs/network_demo.png)
 
 Both objects are ordinary NetworkX graphs. The input remains unchanged, and the selected graph retains its node and edge attributes in their original units. Run `python examples/network_demo.py` from a source checkout to recreate the plot.
 
