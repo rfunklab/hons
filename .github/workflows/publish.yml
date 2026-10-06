@@ -1,0 +1,78 @@
+name: Publish to PyPI
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+jobs:
+  tests:
+    uses: ./.github/workflows/tests.yml
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      wheel: ${{ steps.record.outputs.wheel }}
+      sdist: ${{ steps.record.outputs.sdist }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Check release tag
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python - <<'PYTHON'
+          import os, tomllib
+          with open("pyproject.toml", "rb") as source:
+              version = tomllib.load(source)["project"]["version"]
+          assert os.environ["RELEASE_TAG"] == "v" + version
+          PYTHON
+      - run: python -m pip install build twine
+      - run: python -m build
+      - run: python -m twine check --strict dist/*
+      - name: Verify the built wheel
+        run: |
+          python -m venv /tmp/wheel_check
+          /tmp/wheel_check/bin/python -m pip install dist/*.whl
+          /tmp/wheel_check/bin/python -m unittest discover -s tests -v
+          /tmp/wheel_check/bin/python examples/concept_network.py
+      - name: Verify the built source distribution
+        run: |
+          python -m venv /tmp/sdist_check
+          /tmp/sdist_check/bin/python -m pip install dist/*.tar.gz
+          /tmp/sdist_check/bin/python -m unittest discover -s tests -v
+          /tmp/sdist_check/bin/python examples/concept_network.py
+      - name: Record distribution hashes
+        id: record
+        run: |
+          echo "wheel=$(sha256sum dist/*.whl | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "sdist=$(sha256sum dist/*.tar.gz | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          sha256sum dist/*
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: distributions
+          path: dist/
+          if-no-files-found: error
+  publish:
+    needs: [tests, build]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v7.0.0
+        with:
+          name: distributions
+          path: dist/
+      - name: Confirm these are the verified distributions
+        env:
+          WHEEL_SHA256: ${{ needs.build.outputs.wheel }}
+          SDIST_SHA256: ${{ needs.build.outputs.sdist }}
+        run: |
+          sha256sum dist/*
+          echo "${WHEEL_SHA256}  $(ls dist/*.whl)" | sha256sum --check --strict
+          echo "${SDIST_SHA256}  $(ls dist/*.tar.gz)" | sha256sum --check --strict
+      - uses: pypa/gh-action-pypi-publish@v1.14.2

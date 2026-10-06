@@ -1,0 +1,6 @@
+include examples/concept_network.py
+recursive-include tests *.py
+
+include examples/network_demo.py
+include docs/network_demo.png
+include docs/hons_logo.png
